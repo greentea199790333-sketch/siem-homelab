@@ -1,0 +1,15 @@
+# ── 內部管理檔（工作紀錄與流程，不公開）──
+PROJECT.md
+STATUS.md
+PUBLISH-CHECKLIST.md
+
+# ── 完整設定檔備份：含密碼雜湊、私鑰、憑證，永不進 repo ──
+private/
+
+# ── 暫存與系統檔 ──
+*.bak
+*.tmp
+*~
+Thumbs.db
+desktop.ini
+.DS_Store
