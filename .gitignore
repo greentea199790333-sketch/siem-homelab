@@ -2,6 +2,7 @@
 PROJECT.md
 STATUS.md
 PUBLISH-CHECKLIST.md
+GIT-WORKFLOW.md
 
 # ── 完整設定檔備份：含密碼雜湊、私鑰、憑證，永不進 repo ──
 private/
