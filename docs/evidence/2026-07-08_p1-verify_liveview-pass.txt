@@ -1,0 +1,20 @@
+Phase 1 Step 4 驗證 — OPNsense Live View 側證據（pass 規則，範例化文字版）
+來源：Firewall ▸ Log Files ▸ Live View，篩選 src is [LAB_ATTACKER] AND action is "pass"
+擷取時間：2026-07-08 16:34:05–16:34:09（對應 Kali `nmap -sS -Pn -p 22,445,3389` 掃描時間窗）
+說明：LAB_ATTACKER（172.16.1.100）對 LAB_TARGETS（172.16.20.33）的允許埠 22/445/3389 送出 SYN，觸發規則「LAB allow+log attacker->targets service ports」（pass），LAN 介面 In 方向記錄，並可見端點對應回應（ENDPT_VLAN20 介面 Out 方向 "let out anything from firewall host itself"）。
+
+Interface  Time                  Protocol  Source              Destination      Action  Label
+ENDPT_VLAN20  Out  2026-07-08T16:34:09  TCP  172.16.1.100:33105  172.16.20.33:445   pass  let out anything from firewall host itself
+LAN           In   2026-07-08T16:34:09  TCP  172.16.1.100:33105  172.16.20.33:445   pass  LAB allow+log attacker->targets service ports
+ENDPT_VLAN20  Out  2026-07-08T16:34:07  TCP  172.16.1.100:33103  172.16.20.33:445   pass  let out anything from firewall host itself
+LAN           In   2026-07-08T16:34:07  TCP  172.16.1.100:33103  172.16.20.33:445   pass  LAB allow+log attacker->targets service ports
+ENDPT_VLAN20  Out  2026-07-08T16:34:06  TCP  172.16.1.100:33100  172.16.20.33:22    pass  let out anything from firewall host itself
+ENDPT_VLAN20  Out  2026-07-08T16:34:06  TCP  172.16.1.100:33098  172.16.20.33:22    pass  let out anything from firewall host itself
+ENDPT_VLAN20  Out  2026-07-08T16:34:06  TCP  172.16.1.100:33098  172.16.20.33:3389  pass  let out anything from firewall host itself
+LAN           In   2026-07-08T16:34:06  TCP  172.16.1.100:33098  172.16.20.33:3389  pass  LAB allow+log attacker->targets service ports
+ENDPT_VLAN20  Out  2026-07-08T16:34:05  TCP  172.16.1.100:33098  172.16.20.33:445   pass  let out anything from firewall host itself
+LAN           In   2026-07-08T16:34:05  TCP  172.16.1.100:33098  172.16.20.33:445   pass  LAB allow+log attacker->targets service ports
+
+結論：port 22、445、3389 三個目標埠皆命中 pass 規則，且 VLAN20 端點確實回應（跨段流量成功放行），Phase 1 規則 1 生效驗證通過。
+
+注意：對應原始截圖 2026-07-08_p1-verify_liveview-pass.png 含真實內網 IP（172.16.1.100／172.16.20.33），未打碼，禁止 commit 進 repo（已列入 .gitignore 例外清單，見下）。

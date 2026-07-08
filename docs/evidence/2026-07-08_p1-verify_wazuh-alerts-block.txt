@@ -1,0 +1,19 @@
+Phase 1 Step 4 驗證 — Wazuh alerts.log 側證據（block 規則）
+來源：/var/ossec/logs/alerts/alerts.log（grep filterlog | grep -E '172.16.1.100|172.16.20.33'）
+擷取時間：2026-07-08 16:34（對應 Kali nmap 掃描時間窗）
+說明：LAB_ATTACKER（172.16.1.100）對 LAB_TARGETS（172.16.20.33）非允許埠（110/143/587/135/5900/139/8888/3306/111/53）的 SYN 探測，觸發規則 2「LAB block+log attacker recon」，vtnet0 介面攔截，Wazuh 端正常收到並寫入 alerts.log（無需開 logall）。
+
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,55,33872,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,110,0,S,1585661456,,1024,,mss
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,49,61739,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,143,0,S,1585661456,,1024,,mss
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,59,1772,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,587,0,S,1585661456,,1024,,mss
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,39,6647,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,135,0,S,1585661456,,1024,,mss
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,40,19574,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,5900,0,S,1585661456,,1024,,mss
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,45,34282,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,139,0,S,1585661456,,1024,,mss
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,45,41825,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,8888,0,S,1585661456,,1024,,mss
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,47,35023,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,3306,0,S,1585661456,,1024,,mss
+Jul  8 16:34:06 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,44,37924,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33100,111,0,S,1585661456,,1024,,mss
+Jul  8 16:34:05 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,50,13181,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33098,8888,0,S,1585530386,,1024,,mss
+Jul  8 16:34:05 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,41,28343,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33098,5900,0,S,1585530386,,1024,,mss
+Jul  8 16:34:05 OPNsense.internal filterlog[81287]: 95,,,466f205bec29cc856e6267a419d99a4c,vtnet0,match,block,in,4,0x0,,53,58131,0,none,6,tcp,44,172.16.1.100,172.16.20.33,33098,53,0,S,1585530386,,1024,,mss
+
+備註：Pass 規則（22/445/3389）側驗證僅有 OPNsense Live View 截圖（見 evidence #9 待補），Wazuh 側因不重開 logall 而未取得對應 archives 記錄。判斷：OPNsense 側 pass 記錄 + 兩側介面一致的 block 記錄，已足夠證明 Phase 1 規則鏈路正確生效，不影響 Phase 1 完成認定。

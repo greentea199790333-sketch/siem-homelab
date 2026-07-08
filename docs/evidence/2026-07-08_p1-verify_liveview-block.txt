@@ -1,0 +1,22 @@
+Phase 1 Step 4 驗證 — OPNsense Live View 側證據（block 規則，範例化文字版）
+來源：Firewall ▸ Log Files ▸ Live View，篩選 src is [LAB_ATTACKER]
+擷取時間：2026-07-08 16:34:09（對應 Kali nmap 掃描時間窗，非允許埠部分）
+說明：LAB_ATTACKER（172.16.1.100）對 LAB_TARGETS（172.16.20.33）非允許埠（1029/5298/2909/1072/625/8222/7999/4003/13722/2601/5718/683 等隨機/服務埠）送出 SYN，觸發規則「LAB block+log attacker recon」（block），LAN 介面 In 方向記錄。
+
+Interface  Time                  Protocol  Source               Destination        Action  Label
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:1029   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:5298   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:2909   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:1072   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:625    block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:8222   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:7999   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:4003   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:13722  block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:2601   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:5718   block  LAB block+log attacker recon
+LAN  In  2026-07-08T16:34:09  TCP  172.16.1.100:33100  172.16.20.33:683    block  LAB block+log attacker recon
+
+結論：非允許埠掃描全數命中 block 規則，與 Wazuh alerts.log 側證據（2026-07-08_p1-verify_wazuh-alerts-block.txt）交叉印證一致（同一時間窗、同一來源目的、不同視角：LAN=進入視角，vtnet0=OPNsense內部trunk視角）。Phase 1 規則 2 生效驗證通過。
+
+注意：對應原始截圖 2026-07-08_p1-verify_liveview-block.png 含真實內網 IP（172.16.1.100／172.16.20.33），未打碼，禁止 commit 進 repo。

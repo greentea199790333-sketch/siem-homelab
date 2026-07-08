@@ -3,9 +3,15 @@ PROJECT.md
 STATUS.md
 PUBLISH-CHECKLIST.md
 GIT-WORKFLOW.md
+AI-HANDOFF.md
+DECISIONS-*.md
 
 # ── 完整設定檔備份：含密碼雜湊、私鑰、憑證，永不進 repo ──
 private/
+
+# ── 未打碼截圖（含真實內網 IP，已改用範例化文字版證據代替）──
+docs/evidence/2026-07-08_p1-verify_liveview-pass.png
+docs/evidence/2026-07-08_p1-verify_liveview-block.png
 
 # ── 暫存與系統檔 ──
 *.bak

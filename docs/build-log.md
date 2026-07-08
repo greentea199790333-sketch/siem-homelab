@@ -4,6 +4,45 @@
 
 ---
 
+## 2026-07-08 — Day 2：M1/M2 收尾＋Phase 1 防火牆規則完成
+
+**一句話**：架構定稿、M2 雙證據補齊，Phase 1 防火牆規則上線並用真實攻擊流量驗證生效。
+
+### 1. M1／M2 收尾
+
+- M1：Luke 過目 architecture.md 設計要點措辭，無需修改，v1.0 轉定稿。
+- M2 證據 #2（OPNsense filterlog）：暫開 `<logall>yes` 重截乾淨畫面（`sed -E 's/10\.0\.([0-9]+)\.([0-9]+)/172.16.\1.\2/g'` 一次性範例化，避免逐一列舉 IP 漏網），截畢即關回 `no`。改後 ossec.conf 快照已存。
+- 兩者詳見 [evidence/INDEX.md](evidence/INDEX.md) #1–#2。
+
+### 2. Phase 1 — 防火牆規則（[phase1-opnsense-firewall.md](phase1-opnsense-firewall.md)）
+
+- 主機真實 IP 補齊：static 管理（非 DHCP），Test-33=.33、Test-34=.34、Jump01=.20（VLAN20 段）、Kali=172.16.1.100（untagged）。
+- Step 1 現況盤點：LAN／VLAN10／VLAN20 三介面改動前基準截圖存證（畫面用別名表示，無真實 IP，見 evidence #3–#5）。
+- Step 2 別名：`LAB_TARGETS`（Host(s)，以既有別名巢狀引用而非明碼 IP）、`LAB_ATTACK_PORTS`（22/445/3389）、`LAB_ATTACKER`（Kali 裝機後補建 172.16.1.100）。
+- Step 3 規則：LAN 介面加 Pass+Log／Block+Log 兩條。**踩坑**：初次建立時 Block 規則排在 Pass 規則上面，first-match 邏輯下 Pass 永遠不會命中——對調順序後 Apply 修正（見 evidence #8）。
+- Step 4 驗證（真實攻擊測試）：Kali 對 Test-33 執行 `ping` + `nmap -sS -p 22,445,3389`；首次 nmap 因未加 `-Pn` 觸發 host discovery 判定「down」，指令根本沒送達指定埠——加 `-Pn` 補跑才拿到有效資料。結果：Pass／Block 規則均確認生效（OPNsense Live View 雙向截圖 + Wazuh alerts.log 12 筆 block 記錄交叉印證，見 evidence #9–#11）。
+- 決策：不重開 `<logall>` 補 Pass 側 archives 證據（Luke 裁決）——OPNsense 側 Live View + 端點回應已足夠證明規則生效。
+- 兩張含真實 IP 的原始截圖未入 repo，改存範例化文字版，`.gitignore` 加規則排除。
+
+### 3. 下一步
+
+Phase 2（[phase2-wazuh-log-capture.md](phase2-wazuh-log-capture.md)）：部署 Sysmon＋開 Windows 稽核原則（決策 D3/D4）。
+
+---
+
+## 2026-07-07 — Day 1（晚）：M3+M4 攻防 campaign 規劃
+
+**一句話**：把「防火牆規則 → log 擷取 → Kali 攻擊 → 回頭判讀」寫成可執行的四階段閉環，接上 M3/M4。
+
+- 總路線圖 [roadmap-m3-m4.md](roadmap-m3-m4.md)，四份 Phase 指南（[P1 防火牆](phase1-opnsense-firewall.md)／[P2 log 擷取](phase2-wazuh-log-capture.md)／[P3 Kali 攻擊](phase3-kali-attack-sim.md)／[P4 判讀](phase4-verify-interpret.md)）。
+- 設計主軸：Kali 跨段攻擊 → 防火牆選定埠 pass+log（攻擊落地生 Windows log）、其餘 block+log（掃描被擋生 filterlog），攻防兩側都留證。
+- 攻擊涵蓋偵察（T1595/T1046）、暴力破解（T1110）、執行與持久化（T1059.001/T1136.001/T1053.005）；ART 為主、Metasploit 完整鏈列選配。
+- M3 五條規則草案（含補今天 87701 no_log 盲區的規則 1）入 [detections/README](detections/README.md)；M4 情境對應入 [incidents/README](incidents/README.md)。
+- 10 項需決策項由模型定案（見內部 DECISIONS 檔），另建 AI-HANDOFF 引導未來模型接手。
+- 狀態：紙上規劃完成，未動實機；下一步照 AI-HANDOFF 依序執行 Phase 1。
+
+---
+
 ## 2026-07-07 — Day 1：盤點、斷線事件完修、雙 log 源達成
 
 **當日一句話**：從空白訪談走到 M1 架構草稿＋M2 達成——含一次真實的 5 agent 全斷事件處理。

@@ -1,6 +1,6 @@
 # architecture.md — SIEM Home Lab 架構（M1）
 
-v1.0 草稿：2026-07-07（設計要點措辭待 Luke 定稿後轉正式版）
+v1.0 定稿：2026-07-08（設計要點措辭經 Luke 確認，無需修改）
 事實來源：private\ 三份原始設定（opnsense-config／ossec.conf／pve-vm-configs，2026-07-07）＋實機盤點。
 IP 聲明：文中內網 IP 已範例化（非實際環境值）；對照表存內部管理檔，不隨 repo 公開。
 
@@ -73,7 +73,7 @@ graph TB
 | OPNsense（172.16.10.1）→ 172.16.10.50 | 514/udp | 全量 syslog（filterlog、configd 等）；ossec.conf 新增 syslog `<remote>`（allowed-ips 172.16.10.1） | ✅ 2026-07-07 實機驗證接通（archives 出現 filterlog）。註：private\ ossec.conf 快照為**改前**版本，改後版待重收 |
 | Wazuh 內部 | 9200（127.0.0.1）、443 | indexer／dashboard | all-in-one 本機 |
 
-## 設計要點（草稿，最終措辭由 Luke 定）
+## 設計要點
 
 1. **分段即觀測**：伺服器（VLAN10）與端點（VLAN20）分段，跨段流量強制經 OPNsense——防火牆成為天然觀測點，filterlog 直接變成 SIEM log 源。
 2. **all-in-one SIEM**：單機資源（64GB 已高負載）下選 Wazuh 單節點；代價是無 HA，屬 lab 合理取捨。
