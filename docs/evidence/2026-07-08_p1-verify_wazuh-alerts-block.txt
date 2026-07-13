@@ -1,4 +1,4 @@
-Phase 1 Step 4 驗證 — Wazuh alerts.log 側證據（block 規則）
+Phase 1 Step 4 驗證 — Wazuh alerts.log 側證據（block 規則，範例化文字版）
 來源：/var/ossec/logs/alerts/alerts.log（grep filterlog | grep -E '172.16.1.100|172.16.20.33'）
 擷取時間：2026-07-08 16:34（對應 Kali nmap 掃描時間窗）
 說明：LAB_ATTACKER（172.16.1.100）對 LAB_TARGETS（172.16.20.33）非允許埠（110/143/587/135/5900/139/8888/3306/111/53）的 SYN 探測，觸發規則 2「LAB block+log attacker recon」，vtnet0 介面攔截，Wazuh 端正常收到並寫入 alerts.log（無需開 logall）。

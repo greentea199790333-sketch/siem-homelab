@@ -17,4 +17,4 @@ LAN           In   2026-07-08T16:34:05  TCP  172.16.1.100:33098  172.16.20.33:44
 
 結論：port 22、445、3389 三個目標埠皆命中 pass 規則，且 VLAN20 端點確實回應（跨段流量成功放行），Phase 1 規則 1 生效驗證通過。
 
-注意：對應原始截圖 2026-07-08_p1-verify_liveview-pass.png 含真實內網 IP（172.16.1.100／172.16.20.33），未打碼，禁止 commit 進 repo（已列入 .gitignore 例外清單，見下）。
+注意：對應原始截圖 2026-07-08_p1-verify_liveview-pass.png 含未打碼真實內網 IP，禁止 commit 進 repo（已列入 .gitignore）。
