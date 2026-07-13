@@ -41,13 +41,14 @@ graph LR
 
 - **2026-07-07（Day 1）**：實機盤點時發現 5 台 agent 全數 Disconnected → 根因分析（manager IP 遷移後 agent 設定未跟上）→ 批次修復，當日 5/5 復線。完整排查手冊見 [docs/troubleshoot-agent-disconnect.md](docs/troubleshoot-agent-disconnect.md)。
 - **同日**接入第二種 log 源：OPNsense syslog → Wazuh（[docs/m2-opnsense-syslog.md](docs/m2-opnsense-syslog.md)）。踩坑：內建規則 87701 對單筆防火牆 drop 設 `no_log`，alerts 頁看不到，驗證必須看 archives——這個盲區就是自訂規則（M3）的第一個題目。
+- **2026-07-08（Day 2）**：Phase 1 防火牆規則上線並用真實攻擊流量驗證——Kali 對測試端點跑 `nmap -sS -Pn -p 22,445,3389`，Pass／Block 兩條規則以 OPNsense Live View 與 Wazuh alerts.log（12 筆 block）交叉印證。踩坑兩枚：Block 規則誤排在 Pass 之上（first-match 下 Pass 永不命中）、nmap 未加 `-Pn` 被 host discovery 判 down 而根本沒掃到埠——完整除錯歷程見 [docs/build-log.md](docs/build-log.md)。
 
 ## 里程碑
 
 | # | 里程碑 | 驗收標準 | 狀態 |
 |---|---|---|---|
-| M1 | 架構定稿 | 拓撲圖＋元件表＋資料流＋設計要點 | 🟡 v1.0 草稿完成 |
-| M2 | SIEM 上線 | ≥2 種 log 源＋儀表板證據 | 🟡 兩源已達成，證據補檔中 |
+| M1 | 架構定稿 | 拓撲圖＋元件表＋資料流＋設計要點 | ✅ v1.0 定稿（2026-07-08） |
+| M2 | SIEM 上線 | ≥2 種 log 源＋儀表板證據 | ✅ 完成（兩 log 源＋證據入庫，2026-07-08） |
 | M3 | 偵測工程 | ≥5 條自訂規則，各對應 MITRE ATT&CK＋觸發證據 | ⬜ |
 | M4 | 攻擊模擬 | ≥2 個完整情境（ART／Kali）→ IR 報告 | ⬜ |
 | M5 | 履歷化 | README／resume 整理 | 🟡 repo 骨架完成 |
